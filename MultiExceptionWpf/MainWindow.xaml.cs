@@ -28,17 +28,34 @@ namespace MultiExceptionWpf
 
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
-            TryCatch.TryUsing(() => File.OpenRead(FileTextBox.Text),
-                stream =>
-                {
-                    Trace.WriteLine(stream.Length); 
-                })
+            TryWithUsing();
+        }
+        private void TryOpenFile()
+        {
+            TryCatch.Try(() =>
+                             {
+                                 using (var stream = File.OpenRead(FileTextBox.Text))
+                                 {
+                                     Trace.WriteLine(stream.Length);
+                                 }
+                             })
             .Catch<FileNotFoundException,
-            DirectoryNotFoundException,
-            UnauthorizedAccessException>(ex =>
-            {
-                MessageBox.Show(ex.Message, "Fail");
-            });
+                    DirectoryNotFoundException,
+                    UnauthorizedAccessException>
+                (ex =>
+                {
+                    MessageBox.Show(ex.Message, "Fail");
+                });
+        }
+
+        private void TryWithUsing()
+        {
+            TryCatch.TryUsing(() => File.OpenRead(FileTextBox.Text),
+                              stream => Trace.WriteLine(stream.Length))
+                .Catch<FileNotFoundException,
+                    DirectoryNotFoundException,
+                    UnauthorizedAccessException>
+                (ex => MessageBox.Show(ex.Message, "Fail"));
         }
     }
 }

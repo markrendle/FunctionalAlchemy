@@ -7,7 +7,7 @@ namespace MultiExceptionWpf
 {
     class TryCatch
     {
-        private Action _action;
+        private readonly Action _action;
 
         private TryCatch(Action action)
         {
