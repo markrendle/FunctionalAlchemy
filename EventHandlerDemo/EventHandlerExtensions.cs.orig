@@ -1,0 +1,51 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+
+// ReSharper disable CheckNamespace
+namespace System.ComponentModel
+// ReSharper restore CheckNamespace
+{
+    public static class EventHandlerExtensions
+    {
+        public static void Raise(this EventHandler handler, object sender)
+        {
+            if (handler != null)
+            {
+                handler(sender, EventArgs.Empty);
+            }
+        }
+
+        public static void Raise(this PropertyChangedEventHandler handler, object sender, string propertyName)
+        {
+            if (handler != null)
+            {
+                handler(sender, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public static void Raise<T>(this Delegate handler, object sender, T args)
+            where T : EventArgs
+        {
+            if (handler != null)
+            {
+                handler.DynamicInvoke(sender, args);
+            }
+        }
+
+        #region Lazy creation
+
+        public static void Raise<T>(this Delegate handler, object sender, Func<T> args)
+            where T : EventArgs
+        {
+            if (handler != null)
+            {
+                handler.DynamicInvoke(sender, args());
+            }
+        }
+
+        #endregion
+    }
+}

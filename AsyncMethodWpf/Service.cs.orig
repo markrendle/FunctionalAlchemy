@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+
+namespace AsyncMethodWpf
+{
+  public class Service
+  {
+    private readonly Action<string> _async;
+    public Service()
+    {
+      _async = MethodTweaker.MakeAsync<string, string>(ReverseString, () => ReverseStringCompleted, this);
+    }
+    public string ReverseString(string input)
+    {
+      Thread.Sleep(5000);
+      return new String(input.Reverse().ToArray());
+    }
+
+    public void ReverseStringAsync(string input)
+    {
+      _async(input);
+    }
+
+    public event EventHandler<AsyncCompletedEventArgs<string>> ReverseStringCompleted;
+
+  }
+}

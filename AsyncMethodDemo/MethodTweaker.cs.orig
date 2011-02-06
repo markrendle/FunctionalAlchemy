@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace AsyncMethodWpf
+{
+    public static class MethodTweaker
+    {
+        public static Action<T> MakeAsync<T, TResult>(Func<T, TResult> func, Func<EventHandler<AsyncCompletedEventArgs<TResult>>> handler, object sender)
+        {
+            Action<T> async = (arg) =>
+                {
+                    try
+                    {
+                        var result = func(arg);
+                        handler().Raise(sender, () => new AsyncCompletedEventArgs<TResult>(result, null));
+                    }
+                    catch (Exception ex)
+                    {
+                        handler().Raise(sender, () => new AsyncCompletedEventArgs<TResult>(ex, null));
+                    }
+                };
+
+            return (arg) =>
+                {
+                    async.BeginInvoke(arg, async.EndInvoke, null);
+                };
+        }
+    }
+}

@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+
+namespace CachedMethodDemo
+{
+    public class Service
+    {
+        private Func<string, string> _cachedReverseString;
+
+        public Service()
+        {
+            _cachedReverseString = MethodTweaker.MakeCached<string, string>(_ReverseString);
+        }
+        //private readonly Dictionary<string, string> _cache = new Dictionary<string, string>();
+
+        public Func<string, string> ReverseString
+        {
+            get
+            {
+                return _cachedReverseString;
+            }
+        }
+
+        public void ResetCache()
+        {
+            _cachedReverseString = MethodTweaker.MakeCached<string, string>(_ReverseString);
+        }
+
+        public string _ReverseString(string input)
+        {
+            Thread.Sleep(2000);
+            return new string(input.Reverse().ToArray());
+        }
+    }
+}

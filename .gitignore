@@ -1,0 +1,16 @@
+obj
+bin
+deploy
+*.csproj.user
+*.suo
+*.cache
+~$*
+*~
+*ReSharper*
+*.swp
+*.testsettings
+TestResults/*
+*.dbmdl
+Releases/2*
+.hg
+.hgignore

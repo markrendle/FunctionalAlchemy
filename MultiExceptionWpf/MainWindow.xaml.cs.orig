@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.IO;
+
+namespace MultiExceptionWpf
+{
+  /// <summary>
+  /// Interaction logic for MainWindow.xaml
+  /// </summary>
+  public partial class MainWindow : Window
+  {
+    public MainWindow()
+    {
+      InitializeComponent();
+    }
+
+    private void OpenButton_Click(object sender, RoutedEventArgs e)
+    {
+      TryCatch.Try(() =>
+      {
+        using (FileStream stream = File.OpenRead(FileTextBox.Text)) { }
+      })
+      .Catch<FileNotFoundException,
+        DirectoryNotFoundException,
+        UnauthorizedAccessException>((ex) =>
+      {
+        MessageBox.Show(ex.Message, "Fail");
+      });
+      // Yes, you should check with File.Exists first,
+      // but the file could still theoretically vanish between
+      // that and the Open.
+    }
+  }
+}
